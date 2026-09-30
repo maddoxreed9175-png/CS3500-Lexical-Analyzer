@@ -142,7 +142,7 @@ bool find_aircraft_designation(string str){
                             if (str[place_num] == '-'){
                                 if (str.length() > place_num+1){
                                     place_num += 1;
-                                    if (TYPE_DES.find(str[place_num]) != string::npos){
+                                    if (TYPE_DES.find(str[place_num]) != string::npos && str.length() == place_num+1){
                                         return 1;
                                     }else{
                                         return 0;
