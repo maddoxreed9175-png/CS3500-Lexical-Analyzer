@@ -49,6 +49,10 @@ bool find_decimal(string str){
         if (NUMS.find(str[i]) == string::npos)
             return 0;
     }
+
+    //if string ends with a dot, fail
+    if (str.back() == '.')
+        return 0;
     return 1;
 
 }
