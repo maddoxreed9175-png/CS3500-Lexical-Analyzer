@@ -3,7 +3,10 @@ using namespace std;
 
 const string NUMS = "0123456789";
 const string ATOF = "ABCDEF";
-const string DOT = ".";
+const string KEYWORDS[6] = {"FOO", "IF", "FI", "LOOP", "POOL", "PRINT"};
+const string TYPE_DES = "AGJDPL";
+const string MAN_DES = "AKMNY";
+const string ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 bool find_integer(string str){
     
@@ -26,9 +29,9 @@ bool find_decimal(string str){
         return 0;
 
     for (int i=1; i < str.length(); i++){
-        if (DOT.find(str[i]) != string::npos){
+        if (str[i] == '.'){
             if (found_dot == 0){
-                found_dot == 1;
+                found_dot = 1;
                 continue;
             }else{
                 return 0;
@@ -62,57 +65,138 @@ bool find_scientific(string str){
 
 bool find_hexadecimal(string str){
 
-    for (int i=0; i < str.length(); i++){
-
+    for (int i=1; i < str.length()-1; i++){
+        if (NUMS.find(str[i]) == string::npos && ATOF.find(str[i]) == string::npos)
+            return 0;
     }
+
+    if (str.back() == 'H')
+        return 1;
+
     return 0;
 }
 
 bool find_character_literal(string str){
 
-    for (int i=0; i < str.length(); i++){
+    if (str.length() != 3)
+        return 0;
 
+    for (int i=0; i < 2; i++){
+        if (NUMS.find(str[i]) == string::npos && ATOF.find(str[i]) == string::npos)
+            return 0;
     }
+
+    if (str[2] == 'X')
+        return 1;
+
     return 0;
 }
 
 bool find_keyword(string str){
 
-    for (int i=0; i < str.length(); i++){
-
+    for (int i=0; i < sizeof(KEYWORDS)/sizeof(KEYWORDS[0]); i++){
+        if (KEYWORDS[i] == str)
+            return 1;
     }
+    
     return 0;
 }
 
 bool find_string_literal(string str){
 
-    for (int i=0; i < str.length(); i++){
+    if (str.length() <= 1)
+        return 0;
 
+    if (str[0] == '\"' && str.back() == '\"'){
+    }else{
+        return 0;
     }
-    return 0;
+
+    for (int i=1; i < str.length()-1; i++){
+        if (str[i] == ' ' || str[i] == '\"'){
+            return 0;
+        } 
+    }
+
+    return 1;
 }
 
 bool find_aircraft_designation(string str){
 
-    for (int i=0; i < str.length(); i++){
+    int place_num = 2;
 
+    
+
+    if (TYPE_DES.find(str[0]) != string::npos && NUMS.find(str[1]) != string::npos){
+        if (NUMS.find(str[2]) != string::npos)
+            place_num = 3;
+        if (MAN_DES.find(str[place_num]) != string::npos)
+            if (str.length() > place_num+1){
+                place_num += 1;
+                if (NUMS.find(str[place_num]) != string::npos){
+                    if (str.length() > place_num+1){
+                        place_num += 1;
+                        if (NUMS.find(str[place_num]) != string::npos)
+                            place_num += 1;
+                        if (str.length() > place_num+1){
+                            if (str[place_num] == '-'){
+                                if (str.length() > place_num+1){
+                                    place_num += 1;
+                                    if (TYPE_DES.find(str[place_num]) != string::npos){
+                                        return 1;
+                                    }else{
+                                        return 0;
+                                    }
+                                }
+                            }else{
+                                return 0;
+                            }
+                        }else{
+                            return 1;
+                        }
+                    }else{
+                        return 1;
+                    }
+                }else{
+                    return 0;
+                }
+            }else{
+                return 1;
+            }
+
+            
     }
     return 0;
 }
 
 bool find_identifier(string str){
-    for (int i=0; i < str.length(); i++){
 
+    if (ALPHABET.find(str[0]) == string::npos)
+        return 0;
+
+    for (int i=1; i < str.length(); i++){
+        if (ALPHABET.find(str[i]) == string::npos && NUMS.find(str[i]) == string::npos && str[i] != '_')
+            return 0;
     }
-    return 0;
+    return 1;
 }
 
 bool find_phone_number(string str){
 
-    for (int i=0; i < str.length(); i++){
+    string new_str = "";
 
+    if (str.length() < 12){
+        return 0;
     }
-    return 0;
+
+    if ((str[3] == '.' && str[7] == '.') || (str[3] == '-' && str[7] == '-') || (str[0] == '(' && str[4] == ')' && str[8] == '-')){
+        for (int i=0; i < str.length(); i++){
+            if (NUMS.find(str[i]) != string::npos)
+                new_str += str[i];
+        }
+    }
+
+    return find_integer(new_str);
 }
 
 string find_type(string str){

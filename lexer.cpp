@@ -12,10 +12,12 @@ int main(){
 
     cin >> T;
 
+    cin.ignore();
+
     cout << T << endl;
 
     for (int i=0; i<T; i++){
-        cin >> s;
+        getline(cin, s);
         cout << i+1 << ": " << find_type(s) << endl;
     }
 
